@@ -31,9 +31,26 @@
       text-decoration: none;
       margin: 0 1rem;
       font-weight: bold;
+      position: relative;
     }
     nav a:hover {
       color: #ff3b3b;
+    }
+    .live-badge {
+      display: none; /* hidden by default, JS toggles it */
+      background: #ff3b3b;
+      color: #fff;
+      font-size: 0.7rem;
+      font-weight: bold;
+      padding: 2px 6px;
+      border-radius: 4px;
+      margin-left: 6px;
+      animation: pulse 1s infinite;
+    }
+    @keyframes pulse {
+      0% { opacity: 1; }
+      50% { opacity: 0.5; }
+      100% { opacity: 1; }
     }
     .hero {
       text-align: center;
@@ -125,6 +142,14 @@
       font-size: 0.9rem;
       color: #aaa;
     }
+    iframe {
+      width: 100%;
+      max-width: 960px;
+      height: 540px;
+      border: none;
+      border-radius: 10px;
+      margin-top: 2rem;
+    }
   </style>
 </head>
 <body>
@@ -134,6 +159,9 @@
       <a href="#shop">Shop</a>
       <a href="#about">About</a>
       <a href="#contact">Contact</a>
+      <a href="#livestream">
+        Livestream <span id="live-badge" class="live-badge">LIVE</span>
+      </a>
     </nav>
   </header>
 
@@ -175,6 +203,13 @@
     </p>
   </section>
 
+  <!-- Livestream Section -->
+  <section id="livestream" class="section">
+    <h2>🎥 Watch Us Live</h2>
+    <p>Catch the action from our official Kick channel.</p>
+    <iframe src="https://kick.com/sigmacombatassociations/embed" allowfullscreen></iframe>
+  </section>
+
   <section id="contact" class="section">
     <h2>Contact Us</h2>
     <p>Email: <a href="mailto:support@sigmacombat.store">support@sigmacombat.store</a></p>
@@ -183,5 +218,26 @@
   <footer>
     &copy; 2025 Sigma Combat Store. All rights reserved.
   </footer>
+
+  <!-- JS to check live status -->
+  <script>
+    async function checkLiveStatus() {
+      try {
+        // Replace this URL with your actual API endpoint (proxy to Kick API)
+        const resp = await fetch('/api/kick-status?username=sigmacombatassociations');
+        const data = await resp.json();
+        const badge = document.getElementById('live-badge');
+        badge.style.display = data.is_live ? 'inline-block' : 'none';
+      } catch (err) {
+        console.error('Error checking Kick live status:', err);
+        document.getElementById('live-badge').style.display = 'none';
+      }
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+      checkLiveStatus();
+      setInterval(checkLiveStatus, 60 * 1000); // check every minute
+    });
+  </script>
 </body>
 </html>
